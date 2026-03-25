@@ -1,8 +1,10 @@
 package net.freiday.remotecompose.app
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,12 +27,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.remote.player.view.RemoteComposePlayer
+import androidx.compose.remote.player.compose.RemoteDocumentPlayer
+import androidx.compose.remote.player.core.RemoteDocument
 import androidx.lifecycle.viewmodel.compose.viewModel
 import net.freiday.remotecompose.shared.DocumentCatalog
 import net.freiday.remotecompose.shared.DocumentInfo
@@ -103,9 +106,11 @@ private fun CatalogScreen(catalog: DocumentCatalog, onSelect: (DocumentInfo) -> 
     }
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope", "RestrictedApi")
 @Composable
 private fun DocumentScreen(info: DocumentInfo, bytes: ByteArray) {
-    val context = LocalContext.current
+    val document = remember(bytes) { RemoteDocument(bytes) }
+    val density = LocalDensity.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -114,20 +119,20 @@ private fun DocumentScreen(info: DocumentInfo, bytes: ByteArray) {
             modifier = Modifier.padding(16.dp)
         )
 
-        AndroidView(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(16.dp),
-            factory = {
-                RemoteComposePlayer(context).apply {
-                    setDocument(bytes)
-                }
-            },
-            update = { player ->
-                player.setDocument(bytes)
-            }
-        )
+                .padding(16.dp)
+        ) {
+            val widthPx = with(density) { maxWidth.roundToPx() }
+            val heightPx = with(density) { maxHeight.roundToPx() }
+            RemoteDocumentPlayer(
+                document = document.document,
+                documentWidth = widthPx,
+                documentHeight = heightPx,
+            )
+        }
     }
 }
 

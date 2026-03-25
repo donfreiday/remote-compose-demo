@@ -6,12 +6,12 @@ with a Ktor server and an Android client.
 
 The server builds binary Remote Compose documents on the JVM using `RemoteComposeContext` /
 `RemoteComposeWriter` from the `androidx.compose.remote:remote-creation-*` libraries. The Android
-app fetches these documents over HTTP and renders them natively using `RemoteComposePlayer` from
-`androidx.compose.remote:remote-player-view`.
+app fetches these documents over HTTP and renders them natively using `RemoteDocumentPlayer` from
+`androidx.compose.remote:remote-player-compose`.
 
 ## Screenshots
 
-| Document catalog | Greeting Card rendered by RemoteComposePlayer |
+| Document catalog | Greeting Card rendered by RemoteDocumentPlayer |
 |---|---|
 | ![Catalog](screenshots/screenshot-01.png) | ![Greeting Card](screenshots/screenshot-02.png) |
 
@@ -21,7 +21,7 @@ app fetches these documents over HTTP and renders them natively using `RemoteCom
 |-----------|-------------------------------------------------------------------------------------------------------|
 | `:shared` | Kotlin JVM library with shared models (`DocumentCatalog`, `DocumentInfo`) using kotlinx.serialization |
 | `:server` | Ktor (Netty) server on port 8080 that serves Remote Compose binary documents                          |
-| `:app`    | Android client that fetches and renders documents with `RemoteComposePlayer`                          |
+| `:app`    | Android client that fetches and renders documents with `RemoteDocumentPlayer`                          |
 
 ## Example Documents
 
